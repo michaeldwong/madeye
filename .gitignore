@@ -1,0 +1,4 @@
+*.txt
+__pycache__
+*.json
+continual-learning-temp
