@@ -867,7 +867,7 @@ def get_madeye_results(name, inference_dir,
                       frame_to_model_to_orientation_to_efficientdet_person_count,
                         blacklisted_frames,
                         num_frames_to_send=1,
-                        num_frames_to_keep=5,
+                        num_frames_to_explore=5,
                        ):
 
     all_fixed_results = []
@@ -938,7 +938,7 @@ def get_madeye_results(name, inference_dir,
                                frame_to_model_to_orientation_to_efficientdet_person_count,
                                gt_model_to_object_ids,
                                num_frames_to_send,
-                               num_frames_to_keep,
+                               num_frames_to_explore,
                                blacklisted_frames=blacklisted_frames
                                )
 #                if gt_madeye_accuracy < fixed_score:
@@ -1003,7 +1003,7 @@ def get_madeye_results(name, inference_dir,
     print('Overall MadEye median ', all_madeye_results[int(len(all_madeye_results) / 2) ])
     print('Overall MadEye GT median ', all_gt_madeye_results[int(len(all_gt_madeye_results) / 2) ])
     print('Overall Best dynamic median ', all_dynamic_results[int(len(all_dynamic_results) / 2) ])
-    with open(f'fig14_results_{num_frames_to_send}_{num_frames_to_keep}.txt', 'w') as f:
+    with open(f'fig14_results_{num_frames_to_send}_{num_frames_to_explore}.txt', 'w') as f:
         print('fixed_results_traf = '+  str(all_fixed_results) + '\n')
         print('madeye_results_traf = ' + str(all_madeye_results) + '\n')
         print('gt_results_traf = ' + str( all_gt_madeye_results) + '\n')
@@ -1975,42 +1975,35 @@ def repair_map_dicts_for_region( frame_begin,
             
             
 def main():
-    ap = argparse.ArgumentParser()
-
-    ap.add_argument('name', help='Name of videos')
-    ap.add_argument('inference', help='Directory to inference results (e.g., /disk2/mdwong/inference-results/seattle-dt-1/)')
-    ap.add_argument('rectlinear', help='Directory to rectlinear frames (e.g.,/ disk2/mdwong/rectlinear-output/seattle-dt-1/)')
-    ap.add_argument('map', help='File with mAP results')
-    ap.add_argument('mot', help='Directory with MOT results')
-
-    ap.add_argument('--mapdir', default="/home/mike/Documents/mAP", type=str, help='Directory for mAP computation')
-
-    ap.add_argument('--save',  action='store_true',  help='Set to save (and overwrite) .pkl files')
-    ap.add_argument('-s', '--send', default=1, type=int)
-    ap.add_argument('-k', '--keep', default=4, type=int)
-    args = ap.parse_args()
-    with open('params.yml') as f_params:
+    with open('config.yml') as f_params:
         params = yaml.safe_load(f_params)
 
-    num_frames_to_send = args.send
-    num_frames_to_keep = args.keep
+    rectlinear_dir = params['rectlinear_dir']
+    inference_dir = params['inference_dir']
+    map_project_location = params['map_project_location']
+    map_results_file = params['map_results_file']
+    mot_results_dir = params['mot_results_dir']
+    project_name = params['project_name']
+    save_to_pkl = params['save_to_pkl']
+    num_frames_to_send = params['num_frames_to_send']
+    num_frames_to_explore = params['num_frames_to_explore']
 
-    frame_bound_to_regions_file = f'saved-data/{args.name}/{args.name}-frame_bound_to_regions.pkl'
-    frame_to_model_to_orientation_to_car_count_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_car_count.pkl'
-    frame_to_model_to_orientation_to_person_count_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_person_count.pkl'
+    frame_bound_to_regions_file = f'saved-data/{project_name}/{project_name}-frame_bound_to_regions.pkl'
+    frame_to_model_to_orientation_to_car_count_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_car_count.pkl'
+    frame_to_model_to_orientation_to_person_count_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_person_count.pkl'
 
-    frame_to_model_to_orientation_to_cars_detected_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_cars_detected.pkl'
-    frame_to_model_to_orientation_to_people_detected_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_people_detected.pkl'
-    frame_to_model_to_orientation_to_car_map_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_car_map.pkl'
-    frame_to_model_to_orientation_to_person_map_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_person_map.pkl'
+    frame_to_model_to_orientation_to_cars_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_cars_detected.pkl'
+    frame_to_model_to_orientation_to_people_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_people_detected.pkl'
+    frame_to_model_to_orientation_to_car_map_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_car_map.pkl'
+    frame_to_model_to_orientation_to_person_map_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_person_map.pkl'
 
-    frame_to_model_to_orientation_to_object_ids_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_object_ids.pkl'
-    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_object_id_to_mot_detected.pkl'
+    frame_to_model_to_orientation_to_object_ids_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_object_ids.pkl'
+    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_object_id_to_mot_detected.pkl'
 
-    frame_to_model_to_orientation_to_efficientdet_cars_detected_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_efficeintdet_cars_detected.pkl'
+    frame_to_model_to_orientation_to_efficientdet_cars_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficeintdet_cars_detected.pkl'
 
-    frame_to_model_to_orientation_to_efficientdet_people_detected_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_efficientdet_people_detected.pkl'
-    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'saved-data/{args.name}/{args.name}-frame_to_model_to_orientation_to_efficientdet_person_count.pkl'
+    frame_to_model_to_orientation_to_efficientdet_people_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficientdet_people_detected.pkl'
+    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficientdet_person_count.pkl'
     
     frame_bound_to_regions = {}
 
@@ -2071,10 +2064,10 @@ def main():
 
 #    if not os.path.exists(frame_to_model_to_orientation_to_cars_detected_file) or not os.path.exists(frame_to_model_to_orientation_to_people_detected_file):
     print('Populating map ')
-    populate_map_dicts(args.map, frame_to_model_to_orientation_to_car_map, frame_to_model_to_orientation_to_person_map)
+    populate_map_dicts(map_results_file, frame_to_model_to_orientation_to_car_map, frame_to_model_to_orientation_to_person_map)
 
     if not os.path.exists(frame_to_model_to_orientation_to_object_id_to_mot_detected_file) or not os.path.exists(frame_to_model_to_orientation_to_object_ids_file):
-        frame_to_model_to_orientation_to_object_ids, frame_to_model_to_orientation_to_object_id_to_mot_detected = mot_helper.get_mot_info_from_directory(args.mot)
+        frame_to_model_to_orientation_to_object_ids, frame_to_model_to_orientation_to_object_id_to_mot_detected = mot_helper.get_mot_info_from_directory(mot_results_dir)
 
     print('Evaluating workload')
     orientations = generate_all_orientations()
@@ -2088,7 +2081,7 @@ def main():
 #    w1 = [('faster-rcnn', 'detection', 'person'),]
 #    workloads = [(w1)]
     # 2
-#    get_misc_results( args.inference,
+#    get_misc_results( inference_dir,
 #                       workloads,
 #                       orientations,
 #                       frame_bound_to_regions,
@@ -2129,7 +2122,7 @@ def main():
                                     blacklisted_frames
                                      )
         else:
-            populate_count_dicts(args.inference, frame_begin, frame_limit, frame_to_model_to_orientation_to_car_count, frame_to_model_to_orientation_to_person_count, frame_to_model_to_orientation_to_cars_detected, frame_to_model_to_orientation_to_people_detected)
+            populate_count_dicts(inference_dir, frame_begin, frame_limit, frame_to_model_to_orientation_to_car_count, frame_to_model_to_orientation_to_person_count, frame_to_model_to_orientation_to_cars_detected, frame_to_model_to_orientation_to_people_detected)
             repair_count_dicts( frame_begin,
                                      frame_limit,
                                      frame_to_model_to_orientation_to_car_count, 
@@ -2146,10 +2139,10 @@ def main():
         for r in regions:
 #            map_compute.compute_map(frame_begin, 
 #                        frame_limit, 
-#                        args.inference, 
-#                        args.mapdir, 
-#                        args.map, 
-#                        args.rectlinear, 
+#                        inference_dir, 
+#                        map_project_location, 
+#                        map_results_file, 
+#                        rectlinear_dir, 
 #                        'car', 
 #                        r,
 #                        frame_to_model_to_orientation_to_car_map,
@@ -2160,10 +2153,10 @@ def main():
 #
 #            map_compute.compute_map(frame_begin, 
 #                        frame_limit, 
-#                        args.inference, 
-#                        args.mapdir ,
-#                        args.map, 
-#                        args.rectlinear, 
+#                        inference_dir, 
+#                        map_project_location ,
+#                        map_results_file, 
+#                        rectlinear_dir, 
 #                        'person', 
 #                        r,
 #                        frame_to_model_to_orientation_to_car_map,
@@ -2222,7 +2215,7 @@ def main():
 
 
     print('Blacklisted frames ', blacklisted_frames)
-    if args.save:
+    if save_to_pkl:
         with open(frame_bound_to_regions_file, 'wb') as f:
             pickle.dump(frame_bound_to_regions, f)
         with open(frame_to_model_to_orientation_to_car_count_file, 'wb') as f:
@@ -2281,8 +2274,8 @@ def main():
 #                       frame_to_model_to_orientation_to_object_ids,
 #                        blacklisted_frames
 #                       )
-    get_madeye_results(args.name, args.inference,
-                       args.rectlinear,
+    get_madeye_results(project_name, inference_dir,
+                       rectlinear_dir,
                        params,
                         workloads,
                        frame_bound_to_regions,
@@ -2297,7 +2290,7 @@ def main():
                         frame_to_model_to_orientation_to_efficientdet_people_detected ,
                         blacklisted_frames,
                         num_frames_to_send=num_frames_to_send,
-                        num_frames_to_keep=num_frames_to_keep
+                        num_frames_to_explore=num_frames_to_explore
                        )
 
 
