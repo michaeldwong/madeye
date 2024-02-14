@@ -1085,8 +1085,9 @@ def run_madeye(name,
         # ** EfficientDet inference **
 
         orientation_to_file = {} 
-        for o in current_formation:
-            orientation_to_file[o] = os.path.join(rectlinear_dir, o, f'frame{f}.jpg')
+        if params['use_efficientdet']:
+            for o in current_formation:
+                orientation_to_file[o] = os.path.join(rectlinear_dir, o, f'frame{f}.jpg')
         model_to_orientation_to_efficientdet_car_count = {}
         model_to_orientation_to_efficientdet_person_count = {}
         model_to_orientation_to_efficientdet_cars_detected = {}
@@ -1102,7 +1103,7 @@ def run_madeye(name,
 
             gt_orientation_to_cars_detected = {}
             gt_orientation_to_people_detected = {}
-            for o in orientation_to_file:
+            for o in current_formation:
                 gt_orientation_to_car_count[o] = frame_to_model_to_orientation_to_car_count[f][m][o]
                 gt_orientation_to_person_count[o] = frame_to_model_to_orientation_to_person_count[f][m][o]
                 detected = []

@@ -1988,22 +1988,24 @@ def main():
     num_frames_to_send = params['num_frames_to_send']
     num_frames_to_explore = params['num_frames_to_explore']
 
-    frame_bound_to_regions_file = f'saved-data/{project_name}/{project_name}-frame_bound_to_regions.pkl'
-    frame_to_model_to_orientation_to_car_count_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_car_count.pkl'
-    frame_to_model_to_orientation_to_person_count_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_person_count.pkl'
+    saved_data_dir = params['saved_data_dir']
 
-    frame_to_model_to_orientation_to_cars_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_cars_detected.pkl'
-    frame_to_model_to_orientation_to_people_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_people_detected.pkl'
-    frame_to_model_to_orientation_to_car_map_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_car_map.pkl'
-    frame_to_model_to_orientation_to_person_map_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_person_map.pkl'
+    frame_bound_to_regions_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_bound_to_regions.pkl'
+    frame_to_model_to_orientation_to_car_count_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_car_count.pkl'
+    frame_to_model_to_orientation_to_person_count_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_person_count.pkl'
 
-    frame_to_model_to_orientation_to_object_ids_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_object_ids.pkl'
-    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_object_id_to_mot_detected.pkl'
+    frame_to_model_to_orientation_to_cars_detected_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_cars_detected.pkl'
+    frame_to_model_to_orientation_to_people_detected_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_people_detected.pkl'
+    frame_to_model_to_orientation_to_car_map_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_car_map.pkl'
+    frame_to_model_to_orientation_to_person_map_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_person_map.pkl'
 
-    frame_to_model_to_orientation_to_efficientdet_cars_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficeintdet_cars_detected.pkl'
+    frame_to_model_to_orientation_to_object_ids_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_object_ids.pkl'
+    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_object_id_to_mot_detected.pkl'
 
-    frame_to_model_to_orientation_to_efficientdet_people_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficientdet_people_detected.pkl'
-    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'saved-data/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficientdet_person_count.pkl'
+    frame_to_model_to_orientation_to_efficientdet_cars_detected_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficeintdet_cars_detected.pkl'
+
+    frame_to_model_to_orientation_to_efficientdet_people_detected_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficientdet_people_detected.pkl'
+    frame_to_model_to_orientation_to_object_id_to_mot_detected_file = f'{saved_data_dir}/{project_name}/{project_name}-frame_to_model_to_orientation_to_efficientdet_person_count.pkl'
     
     frame_bound_to_regions = {}
 
@@ -2060,7 +2062,7 @@ def main():
 
     if os.path.exists(frame_to_model_to_orientation_to_object_id_to_mot_detected_file):
         with open(frame_to_model_to_orientation_to_object_id_to_mot_detected_file, 'rb') as f:
-            frame_to_model_to_orientation_to_object_id_to_mot_detected_file = pickle.load(f)
+            frame_to_model_to_orientation_to_object_id_to_mot_detected = pickle.load(f)
 
 #    if not os.path.exists(frame_to_model_to_orientation_to_cars_detected_file) or not os.path.exists(frame_to_model_to_orientation_to_people_detected_file):
     print('Populating map ')
@@ -2239,6 +2241,15 @@ def main():
         if len(frame_to_model_to_orientation_to_person_map) > 0:
             with open(frame_to_model_to_orientation_to_person_map_file, 'wb') as f:
                 pickle.dump(frame_to_model_to_orientation_to_person_map_file, f)
+
+
+        if len(frame_to_model_to_orientation_to_object_ids) > 0:
+            with open(frame_to_model_to_orientation_to_object_ids_file, 'wb') as f:
+                pickle.dump(frame_to_model_to_orientation_to_object_ids, f)
+
+        if len(frame_to_model_to_orientation_to_object_id_to_mot_detected) > 0:
+            with open(frame_to_model_to_orientation_to_object_id_to_mot_detected_file, 'wb') as f:
+                pickle.dump(frame_to_model_to_orientation_to_object_id_to_mot_detected, f)
 
     object_id_to_frame_to_model_to_orientations = mot_helper.get_object_presence_info_from_mot_files(frame_to_model_to_orientation_to_object_ids)
 

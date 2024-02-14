@@ -5,12 +5,13 @@ ssd_voc_weights: weights/efficientdet-d0.pth
 use_efficientdet: False
 gpu: -1
 continual_learning: False
-num_frames_to_send: 1
-num_frames_to_explore: 5
+num_frames_to_send: 2
+num_frames_to_explore: 10
 save_to_pkl: False
 project_name: seattle-dt-1
-rectlinear_dir: None
-inference_dir: None
-map_project_location: None 
-map_results_file: map-scores/seattle-dt-1-map.csv
-mot_results_dir: .
+rectlinear_dir: 
+inference_dir: 
+map_project_location:   
+map_results_file: map-scores/seattle-dt-1-map.csv 
+mot_results_dir: 
+saved_data_dir: saved-data
