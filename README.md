@@ -91,8 +91,8 @@ https://www.youtube.com/watch?v=RDYMD_IZVbo
 
 
 
-After downloading the 360-degree videos, they need to be stored in equirectangular projection. If they are stored as [https://blog.google/products/google-ar-vr/bringing-pixels-front-and-center-vr-video/](equi-angular cubemap), you will need to [https://paulbourke.net/panorama/youtubeformat/](convert them to equirectangular projection yourself).
-With these 360-degree videos, you can create a new video for each possible orientation by converting equirectangular coordinates to rectlinear coordinates using this [https://github.com/michaeldwong/equirectangular-to-rectlinear/tree/master](repo), then run CNNs on images for each orientation.
+After downloading the 360-degree videos, they need to be stored in equirectangular projection. If they are stored as [equi-angular cubemap](https://blog.google/products/google-ar-vr/bringing-pixels-front-and-center-vr-video/), you will need to [convert them to equirectangular projection yourself](https://paulbourke.net/panorama/youtubeformat/).
+With these 360-degree videos, you can create a new video for each possible orientation by converting equirectangular coordinates to rectlinear coordinates using this [repository](https://github.com/michaeldwong/equirectangular-to-rectlinear/tree/master), then run CNNs on images for each orientation.
 Note that the conversion code only models pan and tilt. If you want to zoom, you will need to implementdigital zoom.
 
 
